@@ -6,11 +6,11 @@ export const mockCourseDetail = {
     id: 'math-tc',
     title: 'Mathématiques - Tronc Commun',
     longDescription: 'This course covers advanced calculus topics essential for 2nd year high school students, including differential and integral calculus, limits, derivatives...',
-    imageUrl: '/src/assets/courses/math-banner.png',  
+    imageUrl: './src/assets/courses/math-banner.png',  
     instructor: {
       name: 'Dr. Amina Benali',
       title: 'Ph.D. in Mathematics, 10+ years of teaching experience',
-      avatarUrl: '/src/assets/instructors/amina.png'
+      avatarUrl: './src/assets/instructors/amina.png'
     },
     syllabus: [
       { id: 'm1', title: 'Module 1: Limits and Continuity', description: 'Introduction to limits and continuity' },
