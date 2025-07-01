@@ -6,7 +6,7 @@ export const mockCourseDetail = {
     id: 'math-tc',
     title: 'Mathématiques - Tronc Commun',
     longDescription: 'This course covers advanced calculus topics essential for 2nd year high school students, including differential and integral calculus, limits, derivatives...',
-    imageUrl: '/src/assets/courses/math-banner.jpg', // A larger banner image
+    imageUrl: '/src/assets/courses/math-banner.png',  
     instructor: {
       name: 'Dr. Amina Benali',
       title: 'Ph.D. in Mathematics, 10+ years of teaching experience',
