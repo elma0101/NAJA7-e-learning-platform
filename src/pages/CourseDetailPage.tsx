@@ -1,12 +1,12 @@
 // src/pages/CourseDetailPage.tsx
 import React from 'react';
-import { useParams } from 'react-router-dom';
+//import { useParams } from 'react-router-dom';
 import { mockCourseDetail } from '../mocks/courseDetailsData'; // Import mock data
 import { FiCheckCircle } from 'react-icons/fi';
 
 const CourseDetailPage: React.FC = () => {
   // Get the dynamic courseId from the URL
-  const { courseId } = useParams<{ courseId: string }>();
+  //const { courseId } = useParams<{ courseId: string }>();
 
   // In a real app, you would use this courseId to fetch data from an API.
   // For now, we'll just display our single mock object.

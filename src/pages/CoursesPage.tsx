@@ -7,8 +7,8 @@ import { FiSearch } from 'react-icons/fi';
 const CoursesPage: React.FC = () => {
   // State for managing search and filter values
   const [searchTerm, setSearchTerm] = useState('');
-  const [subjectFilter, setSubjectFilter] = useState('All');
-  const [levelFilter, setLevelFilter] = useState('All');
+  const [subjectFilter, ] = useState('All');
+  const [levelFilter, ] = useState('All');
 
   // Memoize the filtered courses to avoid re-calculating on every render
   const filteredCourses = useMemo(() => {

@@ -1,6 +1,6 @@
 // src/pages/ExercisesPage.tsx
 import React, { useState } from 'react';
-import { useParams } from 'react-router-dom';
+//import { useParams } from 'react-router-dom';
 import { mockExerciseSeries } from '../mocks/exercisesData';
 import { FiAlertCircle, FiX } from 'react-icons/fi';
 
@@ -28,7 +28,7 @@ const ConfirmationModal: React.FC<{ isOpen: boolean; onClose: () => void; onConf
 };
 
 const ExercisesPage: React.FC = () => {
-  const { courseId } = useParams<{ courseId: string }>(); // To get the course name if needed
+  //const { courseId } = useParams<{ courseId: string }>(); // To get the course name if needed
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleShowCorrection = () => {
