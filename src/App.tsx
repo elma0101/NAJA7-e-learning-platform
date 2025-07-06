@@ -14,6 +14,7 @@ import ProfilePage from './pages/ProfilePage';
 import LessonPage from './pages/LessonPage';
 import ExercisesPage from './pages/ExercisesPage';
 import ContactPage from './pages/ContactPage';
+import RegisterPage from './pages/RegisterPage';
  
 
 const App: React.FC = () => {
@@ -24,14 +25,15 @@ const App: React.FC = () => {
         <Route path="/" element={<Layout />}>
           <Route index element={<HomePage />} />
           <Route path="courses" element={<CoursesPage />} />
-          <Route path="courses/:courseId" element={<CourseDetailPage />} />
           <Route path="about" element={<AboutPage />} />
+          <Route path="contact" element={<ContactPage />} />
           <Route path="live-sessions" element={<LiveSessionsPage />} />
-          {/* ... other public pages */}
+          <Route path="register" element={<RegisterPage />} />
+          <Route path="/login" element={<LoginPage />} />
         </Route>
 
         {/* Login page is special, it doesn't need the main layout */}
-        <Route path="/login" element={<LoginPage />} />
+        
 
         {/* --- PROTECTED ROUTES --- */}
         {/* All routes inside here will first check if the user is logged in */}
@@ -43,6 +45,7 @@ const App: React.FC = () => {
             <Route path="learn/:lessonId" element={<LessonPage />} />
             <Route path="exercises/:courseId" element={<ExercisesPage />} />
             <Route path="contact" element={<ContactPage />} /> 
+            <Route path="courses/:courseId" element={<CourseDetailPage />} />
           </Route>
         </Route>
 

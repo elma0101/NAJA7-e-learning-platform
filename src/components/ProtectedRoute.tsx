@@ -1,15 +1,18 @@
-// src/components/ProtectedRoute.tsx
-import React from 'react';
+// src/components/ProtectedRoute.jsx
+ 
 import { Navigate, Outlet } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
-const ProtectedRoute: React.FC = () => {
-  const { isLoggedIn } = useAuth();
+const ProtectedRoute = () => {
+  const { token } = useAuth();
 
-  // If the user is logged in, render the child component (e.g., Dashboard).
-  // The <Outlet /> component does this for nested routes.
-  // If not, redirect them to the login page.
-  return isLoggedIn ? <Outlet /> : <Navigate to="/login" replace />;
+  if (!token) {
+    // User not authenticated
+    return <Navigate to="/login" />;
+  }
+
+  // If authenticated, render the child route
+  return <Outlet />;
 };
 
 export default ProtectedRoute;

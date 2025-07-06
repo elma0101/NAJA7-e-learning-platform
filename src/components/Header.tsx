@@ -6,7 +6,7 @@ import { useAuth } from '../context/AuthContext';
 
 const Header: React.FC = () => {
 
-  const { isLoggedIn, logout, user } = useAuth(); // <-- Get auth state and functions
+  const { logout, user } = useAuth(); // <-- Get auth state and functions
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -29,7 +29,7 @@ const Header: React.FC = () => {
           <Link to="/contact" className="text-medium-text font-medium hover:text-primary-green transition-colors">Contact</Link>
         </nav>
         <div className="flex items-center gap-4">
-          {isLoggedIn ? (
+          {user ? (
             // --- SHOW THIS IF LOGGED IN ---
             <>
               <Link to="/dashboard" className="font-semibold text-medium-text hover:text-primary-green">
@@ -42,13 +42,15 @@ const Header: React.FC = () => {
                 Log Out
               </button>
               <Link to="/profile">
-                <img src={user?.avatarUrl} alt="User Avatar" className="w-10 h-10 rounded-full" />
+                <div className="w-10 h-10 rounded-full bg-primary-green flex items-center justify-center text-white font-semibold">
+                  {user.name?.charAt(0).toUpperCase() || 'U'}
+                </div>
               </Link>
             </>
           ) : (
             // --- SHOW THIS IF LOGGED OUT ---
             <>
-              <Link to="/login" className="bg-primary-green text-white font-semibold py-3 px-6 rounded-lg hover:bg-primary-green-dark">
+              <Link to="/register" className="bg-primary-green text-white font-semibold py-3 px-6 rounded-lg hover:bg-primary-green-dark">
                 Sign Up
               </Link>
               <Link to="/login" className="bg-gray-100 text-dark-text font-semibold py-3 px-6 rounded-lg hover:bg-gray-200">

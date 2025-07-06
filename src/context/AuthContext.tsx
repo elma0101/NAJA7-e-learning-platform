@@ -1,61 +1,65 @@
 // src/context/AuthContext.tsx
-import React, { createContext, useState, useContext, type ReactNode } from 'react';
 
-// Define the shape of our mock user
+import  { createContext, useState, useContext,type ReactNode } from 'react';
+
+// 1. Define the shape of your User object (based on your data.sql)
 interface User {
+  id: number;
   name: string;
   email: string;
-  avatarUrl: string;
-  level: string;
+  role: 'STUDENT' | 'ADMIN'; // Use literal types for roles
 }
 
-// Define the shape of the context data
+// 2. Define the shape of the context value
 interface AuthContextType {
-  isLoggedIn: boolean;
   user: User | null;
-  login: () => void;
+  token: string | null;
+  login: (userData: User, userToken: string) => void;
   logout: () => void;
 }
 
-// Create the context with a default value
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
+// 3. Create the context with a more specific type
+const AuthContext = createContext<AuthContextType | null>(null);
 
-// Create a mock user for our simulation
-const mockUser: User = {
-  name: 'Aicha',
-  email: 'aicha.student@example.com',
-  avatarUrl: '/src/assets/avatars/aicha.png', // Add a placeholder avatar
-  level: '2ème BAC Sciences Physiques',
-};
+export const AuthProvider = ({ children }: { children: ReactNode }) => {
+  // Initialize state from localStorage
+  const [user, setUser] = useState<User | null>(() => {
+    const storedUser = localStorage.getItem('user');
+    return storedUser ? JSON.parse(storedUser) : null;
+  });
 
-// Create the AuthProvider component
-export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [user, setUser] = useState<User | null>(null);
+  const [token, setToken] = useState<string | null>(() => {
+    return localStorage.getItem('token');
+  });
 
-  // Simulate a login action
-  const login = () => {
-    setIsLoggedIn(true);
-    setUser(mockUser);
+  const login = (userData: User, userToken: string) => {
+    localStorage.setItem('user', JSON.stringify(userData));
+    localStorage.setItem('token', userToken);
+    setUser(userData);
+    setToken(userToken);
   };
 
-  // Simulate a logout action
   const logout = () => {
-    setIsLoggedIn(false);
+    localStorage.removeItem('user');
+    localStorage.removeItem('token');
     setUser(null);
+    setToken(null);
   };
+
+  // The value provided to the context consumers
+  const value = { user, token, login, logout };
 
   return (
-    <AuthContext.Provider value={{ isLoggedIn, user, login, logout }}>
+    <AuthContext.Provider value={value}>
       {children}
     </AuthContext.Provider>
   );
 };
 
-// Create a custom hook for easy access to the context
-export const useAuth = (): AuthContextType => {
+// 4. Create a custom hook that provides better error handling
+export const useAuth = () => {
   const context = useContext(AuthContext);
-  if (!context) {
+  if (context === null) {
     throw new Error('useAuth must be used within an AuthProvider');
   }
   return context;
