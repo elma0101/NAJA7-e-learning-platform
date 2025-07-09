@@ -1,0 +1,56 @@
+/* src/components/Hero.css */
+.hero {
+    padding: 4rem 0;
+  }
+  
+  .hero__container {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+  }
+  
+  .hero__content {
+    flex: 1;
+  }
+  
+  .hero__image {
+    flex: 1;
+  }
+  
+  .hero__image img {
+    max-width: 100%;
+    height: auto;
+  }
+  
+  .hero__title {
+    font-size: 3.5rem;
+    font-weight: 800;
+    line-height: 1.2;
+    margin-bottom: 1.5rem;
+    color: var(--dark-text);
+  }
+  
+  .hero__subtitle {
+    font-size: 1.125rem;
+    color: var(--medium-text);
+    margin-bottom: 2rem;
+  }
+  
+  .hero__search {
+    display: flex;
+    border: 1px solid var(--light-gray-border);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  
+  .hero__search input {
+    flex-grow: 1;
+    border: none;
+    padding: 1rem;
+    font-size: 1rem;
+    outline: none;
+  }
+  
+  .hero__search .btn {
+    border-radius: 0;
+  }

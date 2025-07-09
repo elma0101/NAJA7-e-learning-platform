@@ -1,0 +1,52 @@
+/* src/components/HowItWorks.css */
+.how-it-works-section {
+    padding: 4rem 0;
+    background-color: var(--light-gray-bg);
+  }
+  
+  /* Reusing .section-title from Subjects.css, but adding subtitle/description */
+  .section-subtitle {
+    text-align: center;
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-top: -2.5rem; /* Adjust if needed */
+    margin-bottom: 1rem;
+  }
+  
+  .section-description {
+    text-align: center;
+    max-width: 600px;
+    margin: 0 auto 3rem auto;
+    color: var(--medium-text);
+    font-size: 1.1rem;
+  }
+  
+  .steps-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1.5rem;
+  }
+  
+  .step-card {
+    border: 1px solid var(--light-gray-border);
+    border-radius: 12px;
+    padding: 2rem;
+    background-color: #fff;
+  }
+  
+  .step-card__icon {
+    font-size: 2rem;
+    color: var(--primary-green);
+    margin-bottom: 1rem;
+  }
+  
+  .step-card__title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+  }
+  
+  .step-card__description {
+    color: var(--light-text);
+    font-size: 1rem;
+  }

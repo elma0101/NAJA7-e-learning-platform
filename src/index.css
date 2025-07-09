@@ -1,5 +1,38 @@
+<<<<<<< HEAD
+/* src/index.css */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap');
+
+:root {
+  --primary-green: #10B981; /* Tailwind's Emerald 500 */
+  --primary-green-dark: #059669; /* Emerald 600 */
+  --light-gray-bg: #F9FAFB; /* Tailwind's Gray 50 */
+  --light-gray-border: #E5E7EB; /* Gray 200 */
+  --dark-text: #1F2937; /* Gray 800 */
+  --medium-text: #4B5563; /* Gray 600 */
+  --light-text: #6B7280; /* Gray 500 */
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Poppins', sans-serif;
+  background-color: #fff;
+  color: var(--dark-text);
+}
+
+.container {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+=======
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+>>>>>>> a3ad8a319195fd990e209104be994f8bd8d71dce
