@@ -9,12 +9,13 @@ import CoursesPage from './pages/CoursesPage';
 import CourseDetailPage from './pages/CourseDetailPage';
 import AboutPage from './pages/AboutPage';
 import LiveSessionsPage from './pages/LiveSessionsPage';
-import DashboardPage from './pages/DashboardPage';
+import DashboardPage from './pages/DashboardPage/DashboardPage';
 import ProfilePage from './pages/ProfilePage';
-import LessonPage from './pages/LessonPage';
 import ExercisesPage from './pages/ExercisesPage';
 import ContactPage from './pages/ContactPage';
 import RegisterPage from './pages/RegisterPage';
+import LessonPage from './pages/LessonPage/LessonPage';
+
  
 
 const App: React.FC = () => {
@@ -40,12 +41,13 @@ const App: React.FC = () => {
         <Route element={<ProtectedRoute />}>
           {/* They still get the main layout */}
           <Route element={<Layout />}>
-            <Route path="dashboard" element={<DashboardPage />} />
+            <Route path="/dashboard" element={<DashboardPage />} />
             <Route path="profile" element={<ProfilePage />} />
             <Route path="learn/:lessonId" element={<LessonPage />} />
             <Route path="exercises/:courseId" element={<ExercisesPage />} />
             <Route path="contact" element={<ContactPage />} /> 
             <Route path="courses/:courseId" element={<CourseDetailPage />} />
+            <Route path="/courses/:courseId/lessons/:lessonId" element={<LessonPage />} />
           </Route>
         </Route>
 
