@@ -61,7 +61,9 @@ const DashboardPage: React.FC = () => {
             enrolledCourses.length > 0 ? (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
                 {enrolledCourses.map(course => (
-                  <CourseCard key={course.id} course={course} />
+                  <div key={course.id} className="flex">
+                    <CourseCard course={course} />
+                  </div>
                 ))}
               </div>
             ) : (

@@ -2,44 +2,11 @@
 
 import React, { useState, useEffect } from 'react';
 import { useParams , Link } from 'react-router-dom'; // Now being used
-import { FiCheckCircle, FiPlayCircle, FiLock } from 'react-icons/fi';
+import { FiCheckCircle, FiPlayCircle, FiLock, FiDownload } from 'react-icons/fi';
 import apiClient from '../api/apiClient';
 import { useAuth } from '../context/AuthContext';
-
-// --- Type Definitions for your CourseDetailDto ---
-// It's best practice to define the shape of the data you expect from the API.
-// These should match the fields in your backend's CourseDetailDto.
-interface LessonDto {
-  id: number;
-  title: string;
-}
-
-interface ModuleDto {
-  id: number;
-  title: string;
-  lessons: LessonDto[];
-}
-interface Instructor {
-  name: string;
-  title: string;
-  avatarUrl: string;
-}
-
-interface SyllabusModule {
-  id: number;
-  title: string;
-  lessons: LessonDto[];
-}
-
-interface CourseDetail {
-  isEnrolled: boolean;
-  id: number;
-  title: string;
-  longDescription: string; // Assuming a field name from your backend
-  imageUrl: string;
-  instructor: Instructor;
-  syllabus: SyllabusModule[];
-}
+import Accordion from '../components/Accordion/Accordion';
+import type { CourseDetail, Module, Lesson, Instructor } from '../types/course';
 
 const CourseDetailPage: React.FC = () => {
   // Get the dynamic courseId from the URL
@@ -56,8 +23,6 @@ const CourseDetailPage: React.FC = () => {
   const [enrollmentStatus, setEnrollmentStatus] = useState<'idle' | 'success' | 'error'>('idle');
   const [enrollmentError, setEnrollmentError] = useState('');
 
-
-
   // --- Step 3: Implement the handleEnroll function ---
   const handleEnroll = async () => {
     if (!token || !course) {
@@ -70,7 +35,7 @@ const CourseDetailPage: React.FC = () => {
     setEnrollmentError('');
 
     try {
-      const response = await apiClient.post(
+      await apiClient.post(
         '/enrollments', // The endpoint path in your new controller
         { courseId: course.id }, // The request body (EnrollmentRequestDto)
         { 
@@ -81,6 +46,8 @@ const CourseDetailPage: React.FC = () => {
       );
       
       setEnrollmentStatus('success');
+      // Update course state to reflect enrollment
+      setCourse(prev => prev ? { ...prev, isEnrolled: true } : null);
 
     } catch (err: any) {
       console.error("Enrollment failed:", err);
@@ -104,30 +71,47 @@ const CourseDetailPage: React.FC = () => {
       return;
     }
 
-
-
     const fetchCourseDetails = async () => {
       try {
         setLoading(true);
         const config = token ? { headers: { 'Authorization': `Bearer ${token}` } } : {};
         const response = await apiClient.get<CourseDetail>(`/courses/${courseId}`, config);
+        
+        // Log API response for debugging
+        console.log('Course data fetched from database:', response.data);
+        
         setCourse(response.data);
         setError(null);
       } catch (err: any) {
+        console.error("Failed to fetch course details:", err);
+        
         if (err.response && err.response.status === 403) {
           setError("Access Denied: You are not enrolled in this course.");
+        } else if (err.response && err.response.status === 404) {
+          setError("Course not found.");
+        } else if (err.code === 'ECONNREFUSED' || err.message.includes('Network Error')) {
+          setError("Unable to connect to the server. Please make sure the backend is running on http://localhost:8080");
         } else {
-          setError("Failed to load course details.");
+          setError("Failed to load course details. Please try again later.");
         }
       } finally {
         setLoading(false);
       }
     };
 
-    if (token && courseId) {
+    if (courseId) {
       fetchCourseDetails();
     }
-  }, [courseId]); // This effect depends on courseId
+  }, [courseId, token]); // This effect depends on courseId and token
+
+  // Debug useEffect to log course information
+  useEffect(() => {
+    if (course) {
+      console.log('Course loaded from database:', course);
+      console.log('Instructor data (from courses table):', course.instructor);
+      console.log('Instructor type:', typeof course.instructor);
+    }
+  }, [course]);
 
   // --- Conditional Rendering based on state ---
   if (loading) {
@@ -141,6 +125,9 @@ const CourseDetailPage: React.FC = () => {
   if (!course) {
     return <div className="text-center py-40 text-lg">Course not found.</div>;
   }
+
+  // Handle both 'syllabus' and 'modules' property names from API
+  const courseModules = course.syllabus || (course as any).modules || [];
   
   // --- Render the page with live data ---
   return (
@@ -165,49 +152,86 @@ const CourseDetailPage: React.FC = () => {
 
           <h2 className="text-3xl font-bold text-dark-text mb-4">Instructor</h2>
           <div className="flex items-center gap-4 p-4 border rounded-lg mb-8">
-            {course.instructor?.avatarUrl ? (
+            {/* Handle instructor data from courses table */}
+            {course.instructor && typeof course.instructor === 'object' && course.instructor.avatarUrl ? (
               <img src={course.instructor.avatarUrl} alt={course.instructor.name} className="w-16 h-16 rounded-full" />
             ) : (
               <div className="w-16 h-16 rounded-full bg-primary-green flex items-center justify-center text-white font-semibold">
-                {course.instructor?.name?.charAt(0).toUpperCase() || 'I'}
+                {(() => {
+                  if (course.instructor && typeof course.instructor === 'object') {
+                    return course.instructor.name?.charAt(0).toUpperCase() || 'I';
+                  } else if (typeof course.instructor === 'string') {
+                    return course.instructor.charAt(0).toUpperCase();
+                  }
+                  return 'I';
+                })()}
               </div>
             )}
             <div>
-              <h3 className="font-bold text-lg">{course.instructor?.name || 'Unknown Instructor'}</h3>
-              <p className="text-sm text-medium-text">{course.instructor?.title || 'Instructor'}</p>
+              <h3 className="font-bold text-lg">
+                {(() => {
+                  if (course.instructor && typeof course.instructor === 'object') {
+                    return course.instructor.name || 'Unknown Instructor';
+                  } else if (typeof course.instructor === 'string') {
+                    return course.instructor;
+                  }
+                  return 'Unknown Instructor';
+                })()}
+              </h3>
+              <p className="text-sm text-medium-text">
+                {course.instructor && typeof course.instructor === 'object' && course.instructor.title
+                  ? course.instructor.title
+                  : 'Instructor'
+                }
+              </p>
             </div>
           </div>
 
-          <h2 className="text-3xl font-bold text-dark-text mb-4">Syllabus</h2>
-          <div className="space-y-3">
-            {course.syllabus && course.syllabus.length > 0 ? (
-              course.syllabus.map(module => (
-                <div key={module.id} className="p-4 border rounded-lg">
-                  <h3 className="font-bold text-xl mb-4">{module.title}</h3>
-                  <ul className="space-y-4">
-                    {module.lessons.map(lesson => (
-                      <li key={lesson.id}>
-                        {course.isEnrolled ? (
-                          <Link 
-                            to={`/courses/${courseId}/lessons/${lesson.id}`} 
-                            className="flex items-center gap-3 text-medium-text hover:text-primary-green"
-                          >
-                            <FiPlayCircle />
-                            <span>{lesson.title}</span>
-                          </Link>
-                        ) : (
-                          <span className="flex items-center gap-3 text-gray-500">
-                            <FiLock />
-                            <span>{lesson.title}</span>
-                          </span>
-                        )}
+          <h2 className="text-3xl font-bold text-dark-text mb-6">Syllabus</h2>
+          <div className="space-y-4">
+            {courseModules && courseModules.length > 0 ? (
+              courseModules.map((module: Module) => (
+                <Accordion key={module.id} title={module.title}>
+                  <ul className="space-y-3">
+                    {module.lessons.map((lesson: Lesson) => (
+                      <li key={lesson.id} className="flex justify-between items-center p-2 rounded-md hover:bg-gray-50">
+                        
+                        {/* Title and Link to Lesson Page (if enrolled) */}
+                        <div className="flex items-center gap-3">
+                          <FiPlayCircle className="text-gray-400" />
+                          {course.isEnrolled ? (
+                            <Link to={`/courses/${courseId}/lessons/${lesson.id}`} className="text-medium-text font-medium hover:text-primary-green">
+                              {lesson.title}
+                            </Link>
+                          ) : (
+                            <span className="text-medium-text font-medium">{lesson.title}</span>
+                          )}
+                        </div>
+
+                        {/* Download Button or Lock Icon */}
+                        <div>
+                          {course.isEnrolled && lesson.pdfUrl ? (
+                            <a
+                              href={lesson.pdfUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-primary-green hover:underline flex items-center gap-1 text-sm font-semibold"
+                            >
+                              <FiDownload />
+                              <span>PDF</span>
+                            </a>
+                          ) : (
+                            <FiLock className="text-gray-400" title="Enroll to access materials" />
+                          )}
+                        </div>
+
                       </li>
                     ))}
                   </ul>
-                </div>
+                </Accordion>
               ))
             ) : (
-              <p className="text-medium-text">No syllabus available for this course.</p>
+              <p className="text-medium-text">No syllabus is available for this course yet.</p>
             )}
           </div>
         </div>
@@ -218,9 +242,9 @@ const CourseDetailPage: React.FC = () => {
             <h3 className="text-2xl font-bold mb-4">Course Details</h3>
             
             {course.isEnrolled ? (
-              course.syllabus && course.syllabus.length > 0 && course.syllabus[0].lessons && course.syllabus[0].lessons.length > 0 ? (
+              courseModules && courseModules.length > 0 && courseModules[0].lessons && courseModules[0].lessons.length > 0 ? (
                 <Link 
-                  to={`/courses/${courseId}/lessons/${course.syllabus[0].lessons[0].id}`}
+                  to={`/courses/${courseId}/lessons/${courseModules[0].lessons[0].id}`}
                   className="w-full mt-4 bg-primary-green text-white font-semibold py-3 px-6 rounded-lg hover:bg-primary-green-dark transition-colors flex items-center justify-center gap-2"
                 >
                   <FiPlayCircle />
